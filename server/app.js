@@ -1,19 +1,19 @@
 const express = require("express");
 const dotenv = require("dotenv");
-const cookieParser = require("cookie-parser"); // Corrected the typo
+const cookieParser = require("cookie-parser");
 
-dotenv.config(); // Load environment variables from .env file
+dotenv.config();
 
 const cors = require("cors");
 
-const app = express(); // Correctly invoked express
+const app = express();
 
 require("./dbconfig");
 
 // Middleware
 app.use(express.json());
 app.use(cors({ origin: process.env.FRONTEND_URL, credentials: true }));
-app.use(cookieParser()); // Corrected typo
+app.use(cookieParser());
 app.use(require("./router/videoRoute"));
 app.use(require("./router/SeedDatabase"));
 app.use(require("./router/loginRoute"));
@@ -24,9 +24,6 @@ app.get("/", (req, res) => {
 
 const PORT = process.env.PORT || 3000;
 
-
-
-
 app.listen(PORT, () => {
-  console.log(`Server listening at ${PORT}`);
+  console.log(`Server listening at http://localhost:${PORT}`);
 });
