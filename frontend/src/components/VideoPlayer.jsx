@@ -51,7 +51,7 @@ const VideoPlayer = () => {
 
   const saveProgress = useCallback(
     (timestamp) => {
-      if (user.completedVideo + 1 === currentVideo.order) {
+      if (user.completedVideo + 1 === video.order) {
         console.log("trigger");
         updateUserProgress({
           completedVideo: user.completedVideo,
