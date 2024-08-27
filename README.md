@@ -1,4 +1,5 @@
 # Project Documentation: Employee Interactive Training Module
+## Lived At : https://lizmotors-tutorials.vercel.app/
 
 ## 1. Project Overview
 
@@ -30,6 +31,7 @@ The Employee Interactive Training Module is a full-stack application designed to
 
 - **Node.js with Express.js**: Handles the server-side logic and API endpoints.
 - **MongoDB with Mongoose**: Manages video metadata, user information, and progress tracking.
+- **Cloundinary **: Stores video url of videos.
 - **JWT (JSON Web Token)**: Used for user authentication and authorization.
 - **bcryptjs**: Handles password hashing and comparison for secure authentication.
 - **Cookie Parser**: Parses cookies for handling sessions and user state.
@@ -40,8 +42,88 @@ The Employee Interactive Training Module is a full-stack application designed to
 ## 3. Project Structure
 
 ### 3.1. Frontend Structure
+# Frontend File Structure
+
+```plaintext
+frontend/
+│
+├── node_modules/
+│
+├── public/
+│   └── index.html
+│
+├── src/
+│   ├── components/
+│   │   ├── Navbar.jsx
+│   │   └── VideoPlayer.jsx
+│   │
+│   ├── context/
+│   │   ├── user/
+│   │   │   ├── userContext.js
+│   │   │   ├── UserState.jsx
+│   │   │
+│   │   └── videos/
+│   │       ├── videosContext.js
+│   │       └── VideoState.jsx
+│   │
+│   ├── pages/
+│   │   ├── Dashboard.jsx
+│   │   ├── Home.jsx
+│   │   ├── Login.jsx
+│   │   ├── Signup.jsx
+│   │   └── Tutorial.jsx
+│   │
+│   ├── App.css
+│   ├── App.jsx
+│   ├── index.css
+│   ├── main.jsx
+│   └── ServerLink.js
+│
+├── .gitignore
+├── eslint.config.js
+├── index.html
+├── package-lock.json
+├── package.json
+├── postcss.config.js
+├── README.md
+├── tailwind.config.js
+└── vite.config.js
+```
 
 ### 3.2. Backend Structure
+```plain text
+SERVER/
+│
+├── .vercel/
+│
+├── customData/
+│   └── videoData.js
+│
+├── middleware/
+│   └── Authenticate.js
+│
+├── models/
+│   ├── User.js
+│   └── Video.js
+│
+├── node_modules/
+│
+├── router/
+│   ├── loginRoute.js
+│   ├── SeedDatabase.js
+│   └── videoRoute.js
+│
+├── .env
+├── .env.example
+├── .gitignore
+├── app.js
+├── dbconfig.js
+├── package-lock.json
+├── package.json
+├── seed.js
+└── vercel.json
+
+```
 
 ## 4. Detailed Feature Explanation
 
@@ -74,22 +156,24 @@ The Employee Interactive Training Module is a full-stack application designed to
 ### 5.1. User Schema
 
 ```javascript
-const UserSchema = new mongoose.Schema({
-  username: { type: String, required: true, unique: true },
+const userSchema = new mongoose.Schema({
+  name: { type: String, required: true },
+  email: { type: String, required: true, unique: true },
   password: { type: String, required: true },
-  progress: { type: Number, default: 0 }, // Percentage of completed training
-  watchedVideos: [{ videoId: String, watchedUntil: Number }], // Stores watched timestamp for each video
+  completedVideo:{type:Number,default:0},  // Last completed video sequence
+  lastVideoTimeStamp : {type:Number,default: 0}, // Timestamp of the last video watched
 });
+
 ```
 
 ### 5.2. Video Schema
 
 ```javascript
-const VideoSchema = new mongoose.Schema({
+const videoSchema = new mongoose.Schema({
   title: { type: String, required: true },
-  description: { type: String },
-  url: { type: String, required: true }, // URL path to the video file
-  order: { type: Number, required: true }, // Order for sequential playback
+  url: { type: String, required: true },
+  metadata: { type: String, required: true },
+  order: { type: Number, required: true }, // Sequence within the module
 });
 ```
 
@@ -97,21 +181,23 @@ const VideoSchema = new mongoose.Schema({
 
 ### 6.1. Authentication Routes
 
-- **POST /api/auth/register**: Register a new user.
+- **POST /api/auth/signup**: Register a new user.
 - **POST /api/auth/login**: Log in a user and return a JWT token.
-- **GET /api/auth/logout**: Log out a user and clear cookies.
+- **GET /api/auth/getuser**: Get details of user.
+- **GET /api/user/updateProgress**: Update user details.
 
 ### 6.2. Video Routes
 
 - **GET /api/videos**: Get the list of videos in the specified order.
-- **GET /api/videos/:id**: Get specific video details by ID.
-- **POST /api/videos/progress**: Update user progress based on video completion.
+
+### 6.3. Seed Database
+- **GET /api/seed/videos**: Create a custom video database.
 
 ## 7. Frontend Workflow
 
 ### 7.1. Navigation
 
-- **React Router DOM** is used to handle routes like `/login`, `/dashboard`, and `/videos/:id`.
+- **React Router DOM** is used to handle routes like `/login`,`/signup`, `/dashboard`, `/tutorials` and `/tutorials/:_id` .
 - The `PrivateRoute` component ensures protected routes are only accessible to authenticated users.
 
 ### 7.2. Video Playback Logic
@@ -139,5 +225,5 @@ const VideoSchema = new mongoose.Schema({
 
 ### 9.2. Deployment
 
-- The frontend can be built and deployed using services like Vercel or Netlify.
-- The backend can be deployed on platforms like Heroku, Render, or any cloud service (e.g., AWS, DigitalOcean).
+- The whole project is deployed using  Vercel.
+- The project is lived at https://lizmotors-tutorials.vercel.app/
