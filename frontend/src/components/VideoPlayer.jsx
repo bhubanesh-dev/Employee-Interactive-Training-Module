@@ -12,10 +12,8 @@ const VideoPlayer = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (user.length === 0 || videoLibrary.length === 0) {
-      getUserInfo();
-      getVideos();
-    }
+    getUserInfo();
+    getVideos();
   }, []);
 
   const video = videoLibrary.find((video) => video._id === _id);
@@ -51,10 +49,10 @@ const VideoPlayer = () => {
     user.lastVideoTimeStamp,
   ]);
 
-  // Memoized saveProgress function using useCallback
   const saveProgress = useCallback(
     (timestamp) => {
-      if (user.completedVideo + 1 === video.order) {
+      if (user.completedVideo + 1 === currentVideo.order) {
+        console.log("trigger");
         updateUserProgress({
           completedVideo: user.completedVideo,
           lastVideoTimeStamp: timestamp,
@@ -63,21 +61,17 @@ const VideoPlayer = () => {
         });
       }
     },
-    [user.completedVideo, video.order, updateUserProgress] // Dependencies
+    [user.completedVideo, updateUserProgress] // Dependencies
   );
 
   const handleEnded = () => {
-    if (user.completedVideo + 1 === currentVideo.order) {
-      console.log("trigger");
-      
-      updateUserProgress({
-        completedVideo: user.completedVideo + 1,
-        lastVideoTimeStamp: 0.0, // Reset for the next video
-      });
-      toast(
-        "This video is completed. Click on the next module to visit the next video."
-      );
-    }
+    updateUserProgress({
+      completedVideo: user.completedVideo + 1,
+      lastVideoTimeStamp: 0.0, // Reset for the next video
+    });
+    toast(
+      "This video is completed. Click on the next module to visit the next video."
+    );
   };
 
   const handleOnStart = () => {
@@ -88,6 +82,7 @@ const VideoPlayer = () => {
 
   const handlePause = () => {
     if (playerRef.current) {
+      console.log("trigger");
       const timestamp = playerRef.current.getCurrentTime();
       if (timestamp > user.lastVideoTimeStamp) saveProgress(timestamp);
     }
@@ -120,13 +115,11 @@ const VideoPlayer = () => {
       event.preventDefault();
       event.returnValue = "";
     };
-
     window.addEventListener("beforeunload", handleBeforeUnload);
-
     return () => {
       window.removeEventListener("beforeunload", handleBeforeUnload);
     };
-  }, [saveProgress]); // Add saveProgress to dependencies
+  }, []); // Add saveProgress to dependencies
 
   // Save progress when route changes
   useEffect(() => {
@@ -136,22 +129,23 @@ const VideoPlayer = () => {
         saveProgress(timestamp);
       }
     };
-  }, [navigate, saveProgress]); // Add saveProgress to dependencies
+  }, [navigate]); // Add saveProgress to dependencies
 
   const handleGotoNextVideo = () => {
-    if (nextVideo && currentVideo.order <= user.completedVideo + 1) {
+    if (user.completedVideo == 0 && video.order == 1) {
+      toast("Complete the current video first");
+    } else if (nextVideo && currentVideo.order <= user.completedVideo) {
       navigate(`/tutorials/${nextVideo._id}`);
     } else if (nextVideo) {
       toast("Complete the current video first");
     } else {
       // If there's no next video, navigate back to the list
       navigate("/tutorials");
-      toast("There is no next video");
     }
   };
 
   return (
-    <div className="flex flex-col lg:flex-row mx-4 lg:mx-16 mt-8 lg:mt-24 gap-5">
+    <div className="flex flex-col-reverse lg:flex-row mx-4 lg:mx-16 mt-8 lg:mt-24 gap-5">
       <div className="w-full lg:w-1/2 flex flex-col px-8">
         {currentVideo && (
           <>

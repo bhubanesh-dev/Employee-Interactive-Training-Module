@@ -6,7 +6,7 @@ import VideoPlayer from "./components/VideoPlayer";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-import { Home, Dashboard, Tutorial, Login, Signup } from "./pages/";
+import { Home, Dashboard, Tutorial, Login, Signup, NotFound } from "./pages/";
 
 function App() {
   return (
@@ -21,6 +21,7 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/tutorials/:_id" element={<VideoPlayer />} />
+        <Route path="*" element={<NotFound />} />
       </Routes>
     </>
   );

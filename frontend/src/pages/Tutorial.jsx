@@ -17,8 +17,8 @@ const Tutorial = () => {
     }
   }, [isCookiesPresent, navigate]);
 
-  const { videoLibrary,getVideos } = useContext(videoContext);
-  const { user,getUserInfo } = useContext(UserContext);
+  const { videoLibrary, getVideos } = useContext(videoContext);
+  const { user, getUserInfo } = useContext(UserContext);
   useEffect(() => {
     if (user.length == 0 || videoLibrary.length == 0) {
       getUserInfo();
@@ -44,7 +44,6 @@ const Tutorial = () => {
 
   const handleContinuePlaying = () => {
     const video = videoLibrary.find((v) => v.order === user.completedVideo + 1);
-    console.log(video);
 
     navigate(`/tutorials/${video._id}`);
   };

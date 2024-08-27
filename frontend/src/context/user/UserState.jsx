@@ -41,19 +41,22 @@ const UserState = (props) => {
         body: JSON.stringify(progressData),
       });
 
-      // Check if the response is successful
+      // Check if the response is successful (status 200-299)
       if (response.ok) {
-        const { userData, message } = response;
-        const updatedUser = await userData.json();
-        console.log(updatedUser,message);
-        
+        const data = await response.json();
+        const { userData, message } = data;
+
+        console.log(userData, message);
+
         // Assuming the updated user object is returned
-        setUser(updatedUser); // Update the user context state
+        setUser(userData); // Update the user context state
       } else {
-        console.error("Failed to update user progress:", response.statusText);
+        // If response is not successful, handle it accordingly
+        const errorMessage = await response.text(); // Read the error message from the response
+        console.error("Failed to update user progress:", errorMessage);
       }
     } catch (error) {
-      console.error("Failed to update user progress:", error);
+      console.error("Failed to update user progress:", error.message);
     }
   };
 

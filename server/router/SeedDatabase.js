@@ -4,7 +4,7 @@ const videoData = require("../customData/videoData"); // Ensure this path and da
 
 const router = express.Router();
 
-// Route: POST /api/seed/videos
+// Route: POST /api/seed/videos : make the database for video
 router.post("/api/seed/videos", async (req, res) => {
   try {
     // Clear existing video data
