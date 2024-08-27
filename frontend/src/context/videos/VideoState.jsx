@@ -3,7 +3,6 @@ import { useEffect, useState } from "react";
 import link from "../../ServerLink";
 
 const VideoState = (props) => {
-  
   const [videoLibrary, setVideoLibrary] = useState([]);
 
   // Get all Notes
@@ -19,16 +18,11 @@ const VideoState = (props) => {
     const json = await response.json();
     setVideoLibrary(json);
     console.log(videoLibrary);
-  }
+  };
 
-  useEffect(()=>{
-    getVideos();
-  },[]); 
 
   return (
-    <videoContext.Provider
-      value={{ videoLibrary,getVideos }}
-    >
+    <videoContext.Provider value={{ videoLibrary, getVideos }}>
       {props.children}
     </videoContext.Provider>
   );

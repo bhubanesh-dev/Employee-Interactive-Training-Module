@@ -25,20 +25,11 @@ const UserState = (props) => {
       console.error("Error fetching user info:", error.message);
     }
   };
-  useEffect(() => {
-    if (user == []) getUserInfo();
-  }, []); // Fetch user info when the component mounts
 
   // Function to clear user info during logout
   const setUserInfo = () => {
     setUser([]);
   };
-
-  useEffect(() => {
-    setUserInfo();
-  }, []);
-
-  // Function to update the user's video progress
   const updateUserProgress = async (progressData) => {
     try {
       const response = await fetch(`${link}/api/user/updateProgress`, {
@@ -49,8 +40,18 @@ const UserState = (props) => {
         },
         body: JSON.stringify(progressData),
       });
-      setUser(response);
-      console.log(response);
+
+      // Check if the response is successful
+      if (response.ok) {
+        const { userData, message } = response;
+        const updatedUser = await userData.json();
+        console.log(updatedUser,message);
+        
+        // Assuming the updated user object is returned
+        setUser(updatedUser); // Update the user context state
+      } else {
+        console.error("Failed to update user progress:", response.statusText);
+      }
     } catch (error) {
       console.error("Failed to update user progress:", error);
     }

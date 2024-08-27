@@ -84,7 +84,7 @@ router.post("/api/auth/login", async (req, res) => {
     // Respond with the token and user data
     res.status(200).json({
       authtoken: token,
-      message:"Login successful"
+      message: "Login successful",
       // user: {
       //   id: user._id,
       //   name: user.name,
@@ -103,9 +103,7 @@ router.post("/api/auth/login", async (req, res) => {
 router.get("/api/auth/getuser", authenticate, async (req, res) => {
   try {
     userId = req.verifyId;
-    const userData = await User.findById(userId)
-      .select("-password")
-      .select("-messages");
+    const userData = await User.findById(userId).select("-password");
 
     res.send(userData);
   } catch (error) {
@@ -114,18 +112,18 @@ router.get("/api/auth/getuser", authenticate, async (req, res) => {
   }
 });
 
-
 // ROUTE 4: update the user progress
 router.post("/api/user/updateProgress", authenticate, async (req, res) => {
   try {
     const userId = req.verifyId;
     const { completedVideo, lastVideoTimeStamp } = req.body;
-   
 
     if (lastVideoTimeStamp === undefined || lastVideoTimeStamp === null) {
-      return res.status(400).json({ message: "Invalid request: lastVideoTimeStamp is required" });
+      return res
+        .status(400)
+        .json({ message: "Invalid request: lastVideoTimeStamp is required" });
     }
-    
+
     // Find the user by ID
     const user = await User.findById(userId);
 
@@ -134,18 +132,20 @@ router.post("/api/user/updateProgress", authenticate, async (req, res) => {
     }
 
     // Update the user progress fields
-    user.completedVideo = completedVideo !== undefined && completedVideo !== null ? completedVideo : user.completedVideo;
+    user.completedVideo =
+      completedVideo !== undefined && completedVideo !== null
+        ? completedVideo
+        : user.completedVideo;
     user.lastVideoTimeStamp = lastVideoTimeStamp;
 
     // Save the updated user document
-    await user.save();
+    const userData =  await user.save();
 
-    res.json({ message: "Progress updated successfully" });
+    res.json({ message: "Progress updated successfully" ,userData});
   } catch (error) {
     console.error("Error updating progress:", error); // Log error details for debugging
     res.status(500).json({ error: "Error updating progress" });
   }
 });
-
 
 module.exports = router;

@@ -1,14 +1,22 @@
-import { useEffect, useState, useContext, useRef } from "react";
+import { useEffect, useState, useContext, useRef, useCallback } from "react";
 import ReactPlayer from "react-player";
 import { useParams, useNavigate } from "react-router-dom";
 import videoContext from "../context/videos/videosContext";
 import UserContext from "../context/user/userContext";
+import { toast } from "react-toastify";
 
 const VideoPlayer = () => {
   const { _id } = useParams();
-  const { videoLibrary } = useContext(videoContext);
-  const { user, updateUserProgress } = useContext(UserContext);
+  const { videoLibrary, getVideos } = useContext(videoContext);
+  const { user, updateUserProgress, getUserInfo } = useContext(UserContext);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (user.length === 0 || videoLibrary.length === 0) {
+      getUserInfo();
+      getVideos();
+    }
+  }, []);
 
   const video = videoLibrary.find((video) => video._id === _id);
   const previousVideo = videoLibrary.find((v) => v.order === video.order - 1);
@@ -18,7 +26,7 @@ const VideoPlayer = () => {
 
   const [currentVideo, setCurrentVideo] = useState(null);
   const [lastVideoTimeStamp, setLastVideoTimeStamp] = useState(0); // Use float
-  const [allowedSeekTime, setAllowedSeekTime] = useState(0); // Tracks how far the user can seek forward
+  const [allowedSeekTime, setAllowedSeekTime] = useState(0);
 
   useEffect(() => {
     if (!video) {
@@ -43,29 +51,33 @@ const VideoPlayer = () => {
     user.lastVideoTimeStamp,
   ]);
 
-  // Function to save progress to the backend
-  const saveProgress = (timestamp) => {
-    if (user.completedVideo + 1 === video.order) {
-      updateUserProgress({
-        completedVideo: user.completedVideo,
-        lastVideoTimeStamp: timestamp,
-      }).catch((error) => {
-        console.error("Failed to update user progress:", error);
-      });
-    }
-  };
+  // Memoized saveProgress function using useCallback
+  const saveProgress = useCallback(
+    (timestamp) => {
+      if (user.completedVideo + 1 === video.order) {
+        updateUserProgress({
+          completedVideo: user.completedVideo,
+          lastVideoTimeStamp: timestamp,
+        }).catch((error) => {
+          console.error("Failed to update user progress:", error);
+        });
+      }
+    },
+    [user.completedVideo, video.order, updateUserProgress] // Dependencies
+  );
 
   const handleEnded = () => {
-    if (user.completedVideo + 1 === video.order) {
+    if (user.completedVideo + 1 === currentVideo.order) {
+      console.log("trigger");
+      
       updateUserProgress({
         completedVideo: user.completedVideo + 1,
         lastVideoTimeStamp: 0.0, // Reset for the next video
       });
+      toast(
+        "This video is completed. Click on the next module to visit the next video."
+      );
     }
-
-    alert(
-      "This video is completed. Click on the next module to visit the next video."
-    );
   };
 
   const handleOnStart = () => {
@@ -114,7 +126,7 @@ const VideoPlayer = () => {
     return () => {
       window.removeEventListener("beforeunload", handleBeforeUnload);
     };
-  }, []);
+  }, [saveProgress]); // Add saveProgress to dependencies
 
   // Save progress when route changes
   useEffect(() => {
@@ -124,7 +136,19 @@ const VideoPlayer = () => {
         saveProgress(timestamp);
       }
     };
-  }, [navigate]);
+  }, [navigate, saveProgress]); // Add saveProgress to dependencies
+
+  const handleGotoNextVideo = () => {
+    if (nextVideo && currentVideo.order <= user.completedVideo + 1) {
+      navigate(`/tutorials/${nextVideo._id}`);
+    } else if (nextVideo) {
+      toast("Complete the current video first");
+    } else {
+      // If there's no next video, navigate back to the list
+      navigate("/tutorials");
+      toast("There is no next video");
+    }
+  };
 
   return (
     <div className="flex flex-col lg:flex-row mx-4 lg:mx-16 mt-8 lg:mt-24 gap-5">
@@ -145,6 +169,7 @@ const VideoPlayer = () => {
                   } else {
                     // If there's no previous video, navigate back to the list
                     navigate("/tutorials");
+                    toast("There is no previous video");
                   }
                 }}
               >
@@ -154,16 +179,7 @@ const VideoPlayer = () => {
               </button>
               <button
                 className="bg-blue-500 p-2 text-white rounded-md"
-                onClick={() => {
-                  if (nextVideo && currentVideo.order <= user.completedVideo) {
-                    navigate(`/tutorials/${nextVideo._id}`);
-                  } else if (nextVideo) {
-                    alert("Complete the current video first");
-                  } else {
-                    // If there's no next video, navigate back to the list
-                    navigate("/tutorials");
-                  }
-                }}
+                onClick={handleGotoNextVideo}
               >
                 {nextVideo
                   ? `Go to module ${nextVideo.order}`

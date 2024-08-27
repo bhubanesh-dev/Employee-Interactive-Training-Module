@@ -17,8 +17,14 @@ const Tutorial = () => {
     }
   }, [isCookiesPresent, navigate]);
 
-  const { videoLibrary } = useContext(videoContext);
-  const { user } = useContext(UserContext);
+  const { videoLibrary,getVideos } = useContext(videoContext);
+  const { user,getUserInfo } = useContext(UserContext);
+  useEffect(() => {
+    if (user.length == 0 || videoLibrary.length == 0) {
+      getUserInfo();
+      getVideos();
+    }
+  }, []);
 
   const handleVideoSelect = (video) => {
     // Check if the user can access this video
@@ -58,15 +64,15 @@ const Tutorial = () => {
           <div className="flex flex-row justify-evenly gap-4 ml-56">
             <span className="flex flex-row items-center gap-4">
               <div className="h-6 w-12 bg-green-400 rounded-md"></div>
-              <div>completedVideo</div>
+              <div>completed</div>
             </span>
             <span className="flex flex-row items-center gap-4">
               <div className="h-6 w-12 bg-yellow-400 rounded-md"></div>
-              <div>Partially completedVideo</div>
+              <div>Partially completed</div>
             </span>
             <span className="flex flex-row items-center gap-4">
               <div className="h-6 w-12 bg-blue-400 rounded-md"></div>
-              <div>Not completedVideo</div>
+              <div>Not completed</div>
             </span>
           </div>
         </div>

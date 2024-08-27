@@ -20,7 +20,7 @@ const Dashboard = () => {
   const { user, getUserInfo } = useContext(UserContext);
   const { videoLibrary, getVideos } = useContext(videoContext);
   useEffect(() => {
-    if (!user || !videoLibrary) {
+    if (user.length == 0 || videoLibrary.length == 0) {
       getUserInfo();
       getVideos();
     }
