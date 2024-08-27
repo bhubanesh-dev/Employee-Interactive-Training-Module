@@ -120,7 +120,7 @@ router.post("/api/user/updateProgress", authenticate, async (req, res) => {
   try {
     const userId = req.verifyId;
     const { completedVideo, lastVideoTimeStamp } = req.body;
-    console.log(req.body);
+   
 
     if (lastVideoTimeStamp === undefined || lastVideoTimeStamp === null) {
       return res.status(400).json({ message: "Invalid request: lastVideoTimeStamp is required" });

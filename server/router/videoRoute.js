@@ -28,19 +28,12 @@ router.post("/api/videos", async (req, res) => {
 
     res.status(201).json(newVideo);
   } catch (error) {
-    console.error("Error saving the video:", error);
+    
     res.status(500).json({ message: "Internal server error" });
   }
 });
 
-// router.get("/api/videos", async (req, res) => {
-//   const {videoUrl} = req.body;
-//   const videos = await Video.find(videoUrl);
-//   console.log(videos);
-  
-  
-//   res.json(videos);
-// });
+
 
 // Route: 2-->  Fetch all videos in sequence
 router.get('/api/videos', async (req, res) => {
@@ -48,8 +41,6 @@ router.get('/api/videos', async (req, res) => {
     // Fetch all videos and sort them by the 'order' field
     const videos = await Video.find().sort({ order: 1 });
 
-    // Log videos for debugging
-    console.log(videos);
 
     // Send the response with the videos
     res.json(videos);
