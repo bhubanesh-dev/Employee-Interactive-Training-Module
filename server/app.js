@@ -1,6 +1,6 @@
 const express = require("express");
 const dotenv = require("dotenv");
-const cookiePraser = require("cookie-parser");
+const cookieParser = require("cookie-parser"); // Corrected the typo
 
 dotenv.config(); // Load environment variables from .env file
 
@@ -13,16 +13,20 @@ require("./dbconfig");
 // Middleware
 app.use(express.json());
 app.use(cors({ origin: process.env.FRONTEND_URL, credentials: true }));
-app.use(cookiePraser());
+app.use(cookieParser()); // Corrected typo
 app.use(require("./router/videoRoute"));
 app.use(require("./router/SeedDatabase"));
 app.use(require("./router/loginRoute"));
 
-
-
 app.get("/", (req, res) => {
-  res.send(`Hello from Coder `);
+  res.send(`Hello from Coder`);
 });
-app.listen(5000, () => {
-  console.log("Server listening at port http://localhost:5000");
+
+const PORT = process.env.PORT || 3000;
+
+
+
+
+app.listen(PORT, () => {
+  console.log(`Server listening at ${PORT}`);
 });
