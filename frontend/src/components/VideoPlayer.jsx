@@ -65,10 +65,14 @@ const VideoPlayer = () => {
   );
 
   const handleEnded = () => {
-    updateUserProgress({
-      completedVideo: user.completedVideo + 1,
-      lastVideoTimeStamp: 0.0, // Reset for the next video
-    });
+    {
+      //check user video doesn;t increases than videoLibrary length
+      updateUserProgress({
+        completedVideo: user.completedVideo + 1,
+        lastVideoTimeStamp: 0.0, // Reset for the next video
+      });
+    }
+
     toast(
       "This video is completed. Click on the next module to visit the next video."
     );

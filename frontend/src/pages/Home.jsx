@@ -17,6 +17,9 @@ const Home = () => {
       
     }
   }, [isCookiesPresent]);
+  useEffect(()=>{
+    getUserInfo();
+  },[]);
 
   // Example usage
 

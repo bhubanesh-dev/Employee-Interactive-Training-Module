@@ -32,7 +32,7 @@ const UserState = (props) => {
   };
   const updateUserProgress = async (progressData) => {
     try {
-      const response = await fetch(`${link}/api/user/updateProgress`, {
+        const response = await fetch(`${link}/api/user/updateProgress`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

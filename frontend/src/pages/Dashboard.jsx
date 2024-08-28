@@ -44,11 +44,22 @@ const Dashboard = () => {
       <div className="flex flex-row gap-8 mb-8">
         <div className="p-6 bg-blue-400 rounded-lg shadow-lg transform hover:scale-105 transition-transform">
           <h3 className="text-2xl font-semibold mb-2 text-white">
-            Completed Videos
+            Completed videos
           </h3>
           <p className="text-lg text-white">
-            {user.completedVideo} /{" "}
+            {user.completedVideo} /
             {videoLibrary.length > 0 ? videoLibrary.length : 0}
+          </p>
+          <h3 className="text-2xl font-semibold mb-2 text-white">
+            Completed modules
+          </h3>
+          <p className="text-lg text-white">
+            {(
+              (user.completedVideo /
+                (videoLibrary.length > 0 ? videoLibrary.length : 1)) *
+              100
+            ).toFixed(2)}
+            %
           </p>
         </div>
         <div className="p-6 bg-blue-400 rounded-lg shadow-lg transform hover:scale-105 transition-transform">
